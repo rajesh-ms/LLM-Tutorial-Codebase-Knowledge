@@ -145,6 +145,7 @@ def crawl_github_files(
 
         url = f"https://api.github.com/repos/{owner}/{repo}/branches"
         response = requests.get(url, headers=headers)
+        time.sleep(1)
 
         if response.status_code == 404:
             if not token:
@@ -166,6 +167,7 @@ def crawl_github_files(
 
         url = f"https://api.github.com/repos/{owner}/{repo}/git/trees/{tree}"
         response = requests.get(url, headers=headers)
+        time.sleep(1)
 
         return True if response.status_code == 200 else False 
 
@@ -217,6 +219,7 @@ def crawl_github_files(
         params = {"ref": ref} if ref != None else {}
         
         response = requests.get(url, headers=headers, params=params)
+        time.sleep(1)
         
         if response.status_code == 403 and 'rate limit exceeded' in response.text.lower():
             reset_time = int(response.headers.get('X-RateLimit-Reset', 0))
@@ -277,6 +280,7 @@ def crawl_github_files(
                 if "download_url" in item and item["download_url"]:
                     file_url = item["download_url"]
                     file_response = requests.get(file_url, headers=headers)
+                    time.sleep(1)
                     
                     # Final size check in case content-length header is available but differs from metadata
                     content_length = int(file_response.headers.get('content-length', 0))
@@ -293,6 +297,7 @@ def crawl_github_files(
                 else:
                     # Alternative method if download_url is not available
                     content_response = requests.get(item["url"], headers=headers)
+                    time.sleep(1)
                     if content_response.status_code == 200:
                         content_data = content_response.json()
                         if content_data.get("encoding") == "base64" and "content" in content_data:
